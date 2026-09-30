@@ -820,7 +820,187 @@ button{
     }
 
 }
+/* =========================================================
+   ÜRÜN & STOK YÖNETİMİ
+========================================================= */
 
+.stock-manager{
+    margin-bottom:18px;
+}
+
+.stock-manager-toggle{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:16px 18px;
+    background:#fff;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+
+    text-align:left;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.04);
+}
+
+.stock-manager-small{
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1px;
+    color:#999;
+    margin-bottom:3px;
+}
+
+.stock-manager-title{
+    font-size:17px;
+    font-weight:900;
+    color:#111;
+}
+
+.stock-manager-count{
+    background:#f3f4f6;
+    border-radius:999px;
+    padding:8px 11px;
+
+    font-size:10px;
+    font-weight:900;
+    color:#555;
+
+    white-space:nowrap;
+}
+
+
+.stock-manager-panel{
+    margin-top:10px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:17px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.04);
+}
+
+
+.stock-manager-head{
+    margin-bottom:15px;
+}
+
+.stock-manager-head strong{
+    font-size:14px;
+    font-weight:900;
+}
+
+.stock-manager-description{
+    margin-top:4px;
+    color:#777;
+    font-size:11px;
+    line-height:1.5;
+}
+
+
+.stock-category{
+    margin-top:20px;
+}
+
+.stock-category:first-child{
+    margin-top:0;
+}
+
+.stock-category-title{
+    font-size:11px;
+    font-weight:900;
+    color:#777;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+
+    padding-bottom:8px;
+    border-bottom:1px solid #eee;
+}
+
+
+.stock-product{
+    display:grid;
+    grid-template-columns:
+        minmax(0,1fr)
+        auto
+        110px;
+
+    gap:12px;
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:
+        1px solid #f1f1f1;
+}
+
+.stock-product:last-child{
+    border-bottom:0;
+}
+
+.stock-product-name{
+    font-size:13px;
+    font-weight:800;
+}
+
+.stock-product-price{
+    font-size:12px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+
+.stock-button{
+    border:0;
+    border-radius:10px;
+    padding:10px 8px;
+
+    font-size:10px;
+    font-weight:900;
+}
+
+.stock-button.available{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.stock-button.soldout{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.stock-button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+
+.stock-loading{
+    padding:25px;
+    text-align:center;
+    color:#888;
+    font-size:12px;
+}
+
+
+@media(max-width:600px){
+
+    .stock-product{
+        grid-template-columns:
+            minmax(0,1fr)
+            auto;
+    }
+
+    .stock-button{
+        grid-column:1/-1;
+        width:100%;
+    }
+
+}
 </style>
 </head>
 
@@ -998,7 +1178,72 @@ button{
     >
         BEKLEYİN...
     </button>
+<!-- =====================================================
+     ÜRÜN & STOK YÖNETİMİ
+===================================================== -->
 
+<section class="stock-manager">
+
+    <button
+        type="button"
+        class="stock-manager-toggle"
+        id="stockManagerToggle"
+    >
+
+        <div>
+            <div class="stock-manager-small">
+                MENÜ YÖNETİMİ
+            </div>
+
+            <div class="stock-manager-title">
+                ÜRÜN & STOK
+            </div>
+        </div>
+
+        <div
+            class="stock-manager-count"
+            id="stockManagerCount"
+        >
+            YÜKLENİYOR...
+        </div>
+
+    </button>
+
+
+    <div
+        id="stockManagerPanel"
+        class="stock-manager-panel hidden"
+    >
+
+        <div class="stock-manager-head">
+
+            <div>
+                <strong>
+                    ÜRÜNLER
+                </strong>
+
+                <div class="stock-manager-description">
+                    Satışı biten ürünü TÜKENDİ olarak işaretleyin.
+                </div>
+            </div>
+
+        </div>
+
+
+        <div
+            id="stockProducts"
+            class="stock-products"
+        >
+
+            <div class="stock-loading">
+                Ürünler yükleniyor...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 </div>
         <div
             class="new-order-alert"
@@ -1190,7 +1435,8 @@ let restaurantAcceptingOrders =
 
 let orders =
     [];
-
+let products =
+    [];
 
 let firstLoad =
     true;
@@ -1799,7 +2045,7 @@ async function startPanel(){
 
 
         await loadOrders();
-
+await loadProducts();
 
         clearInterval(
             refreshTimer
@@ -1857,7 +2103,480 @@ async function startPanel(){
 
 }
 
+/* =========================================================
+   ÜRÜNLERİ / STOK DURUMUNU ÇEK
+========================================================= */
 
+async function loadProducts(){
+
+    if(
+        !currentRestaurantId
+    ){
+        return;
+    }
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .from(
+            "xd_products"
+        )
+        .select(
+            "id,product_id,name,category,price,active,sort_order"
+        )
+        .eq(
+            "restaurant_id",
+            currentRestaurantId
+        )
+        .order(
+            "sort_order",
+            {
+                ascending:true
+            }
+        );
+
+
+        if(
+            error
+        ){
+            throw error;
+        }
+
+
+        products =
+            data
+            ||
+            [];
+
+
+        renderProductsStock();
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Ürünler alınamadı:",
+            error
+        );
+
+
+        const container =
+            document.getElementById(
+                "stockProducts"
+            );
+
+
+        if(
+            container
+        ){
+
+            container.innerHTML =
+                `
+                <div class="stock-loading">
+                    Ürünler yüklenemedi.
+                </div>
+                `;
+
+        }
+
+
+        showToast(
+            "Ürün listesi alınamadı."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   STOK EKRANINI OLUŞTUR
+========================================================= */
+
+function renderProductsStock(){
+
+    const container =
+        document.getElementById(
+            "stockProducts"
+        );
+
+
+    const countElement =
+        document.getElementById(
+            "stockManagerCount"
+        );
+
+
+    if(
+        !container
+        ||
+        !countElement
+    ){
+        return;
+    }
+
+
+    const availableCount =
+        products.filter(
+            function(product){
+
+                return (
+                    product.active
+                    ===
+                    true
+                );
+
+            }
+        ).length;
+
+
+    const soldOutCount =
+        products.length
+        -
+        availableCount;
+
+
+    countElement.textContent =
+        availableCount
+        +
+        " SATIŞTA"
+        +
+        (
+            soldOutCount > 0
+            ?
+            " • "
+            +
+            soldOutCount
+            +
+            " TÜKENDİ"
+            :
+            ""
+        );
+
+
+    if(
+        products.length === 0
+    ){
+
+        container.innerHTML =
+            `
+            <div class="stock-loading">
+                Bu restorana ait ürün bulunamadı.
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    const categories =
+        {};
+
+
+    products.forEach(
+        function(product){
+
+            const category =
+                product.category
+                ||
+                "Diğer";
+
+
+            if(
+                !categories[category]
+            ){
+
+                categories[category] =
+                    [];
+
+            }
+
+
+            categories[category].push(
+                product
+            );
+
+        }
+    );
+
+
+    let html =
+        "";
+
+
+    Object.keys(
+        categories
+    )
+    .forEach(
+        function(category){
+
+            html +=
+                `
+                <div class="stock-category">
+
+                    <div class="stock-category-title">
+                        ${escapeHtml(category)}
+                    </div>
+                `;
+
+
+            categories[category]
+            .forEach(
+                function(product){
+
+                    const isActive =
+                        product.active
+                        ===
+                        true;
+
+
+                    html +=
+                        `
+                        <div class="stock-product">
+
+                            <div class="stock-product-name">
+                                ${escapeHtml(product.name)}
+                            </div>
+
+                            <div class="stock-product-price">
+                                ${money(product.price)}
+                            </div>
+
+                            <button
+                                type="button"
+                                class="
+                                    stock-button
+                                    ${
+                                        isActive
+                                        ?
+                                        "available"
+                                        :
+                                        "soldout"
+                                    }
+                                "
+                                onclick="toggleProductStock(
+                                    '${product.id}',
+                                    ${isActive},
+                                    this
+                                )"
+                            >
+                                ${
+                                    isActive
+                                    ?
+                                    "● SATIŞTA"
+                                    :
+                                    "● TÜKENDİ"
+                                }
+                            </button>
+
+                        </div>
+                        `;
+
+                }
+            );
+
+
+            html +=
+                `
+                </div>
+                `;
+
+        }
+    );
+
+
+    container.innerHTML =
+        html;
+
+}
+
+
+/* =========================================================
+   ÜRÜN STOK DURUMUNU DEĞİŞTİR
+========================================================= */
+
+async function toggleProductStock(
+    productId,
+    currentActive,
+    button
+){
+
+    const newActive =
+        !currentActive;
+
+
+    if(
+        button
+    ){
+
+        button.disabled =
+            true;
+
+
+        button.textContent =
+            "GÜNCELLENİYOR...";
+
+    }
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .from(
+            "xd_products"
+        )
+        .update(
+            {
+                active:
+                    newActive
+            }
+        )
+        .eq(
+            "id",
+            productId
+        )
+        .eq(
+            "restaurant_id",
+            currentRestaurantId
+        )
+        .select(
+            "id,active"
+        )
+        .single();
+
+
+        if(
+            error
+        ){
+            throw error;
+        }
+
+
+        const product =
+            products.find(
+                function(item){
+
+                    return (
+                        item.id
+                        ===
+                        productId
+                    );
+
+                }
+            );
+
+
+        if(
+            product
+        ){
+
+            product.active =
+                data.active;
+
+        }
+
+
+        renderProductsStock();
+
+
+        if(
+            data.active
+        ){
+
+            showToast(
+                "Ürün tekrar satışa açıldı."
+            );
+
+        }
+
+        else{
+
+            showToast(
+                "Ürün TÜKENDİ olarak işaretlendi."
+            );
+
+        }
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Stok durumu değiştirilemedi:",
+            error
+        );
+
+
+        showToast(
+            "Ürün durumu değiştirilemedi."
+        );
+
+
+        await loadProducts();
+
+    }
+
+}
+
+
+/* =========================================================
+   STOK PANELİNİ AÇ / KAPAT
+========================================================= */
+
+document
+.getElementById(
+    "stockManagerToggle"
+)
+.addEventListener(
+    "click",
+    function(){
+
+        const panel =
+            document.getElementById(
+                "stockManagerPanel"
+            );
+
+
+        const isHidden =
+            panel.classList.contains(
+                "hidden"
+            );
+
+
+        if(
+            isHidden
+        ){
+
+            panel.classList.remove(
+                "hidden"
+            );
+
+
+            loadProducts();
+
+        }
+
+        else{
+
+            panel.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+);
 
 /* =========================================================
    SİPARİŞLERİ ÇEK

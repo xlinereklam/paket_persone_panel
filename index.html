@@ -1,1 +1,2921 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
 
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta name="theme-color" content="#101010">
+
+<title>XLine Delivery | Personel Paneli</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#f3f4f6;
+    --card:#ffffff;
+    --dark:#101010;
+    --muted:#737373;
+    --border:#e5e7eb;
+    --red:#dc2626;
+    --orange:#f97316;
+    --green:#16a34a;
+    --blue:#2563eb;
+    --yellow:#eab308;
+    --purple:#7c3aed;
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+    font-family:"Inter",sans-serif;
+    background:var(--bg);
+    color:#171717;
+}
+
+button,
+input{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.hidden{
+    display:none !important;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+#loginScreen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(220,38,38,.20),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            #080808,
+            #171717
+        );
+}
+
+.login-card{
+    width:100%;
+    max-width:430px;
+    background:#fff;
+    border-radius:24px;
+    padding:32px 24px;
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.35);
+}
+
+.login-brand{
+    text-align:center;
+    margin-bottom:28px;
+}
+
+.login-brand-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px 12px;
+    background:#111;
+    color:#fff;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:1.5px;
+    border-radius:999px;
+    margin-bottom:16px;
+}
+
+.login-brand h1{
+    font-size:27px;
+    font-weight:900;
+    line-height:1.1;
+}
+
+.login-brand p{
+    margin-top:8px;
+    color:#777;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.form-group{
+    margin-bottom:16px;
+}
+
+.form-group label{
+    display:block;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:7px;
+}
+
+.form-group input{
+    width:100%;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:15px;
+    outline:none;
+    background:#fafafa;
+}
+
+.form-group input:focus{
+    border-color:#111;
+    background:#fff;
+}
+
+.login-button{
+    width:100%;
+    border:0;
+    border-radius:13px;
+    padding:16px;
+    background:#dc2626;
+    color:#fff;
+    font-weight:900;
+    font-size:14px;
+    margin-top:4px;
+}
+
+.login-button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.login-error{
+    margin-top:14px;
+    padding:12px;
+    border-radius:10px;
+    background:#fee2e2;
+    color:#991b1b;
+    font-size:12px;
+    font-weight:700;
+    display:none;
+}
+
+
+/* =========================================================
+   PANEL
+========================================================= */
+
+#panelScreen{
+    min-height:100vh;
+}
+
+.topbar{
+    background:#101010;
+    color:#fff;
+    padding:18px 20px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    box-shadow:0 4px 20px rgba(0,0,0,.18);
+}
+
+.topbar-inner{
+    max-width:1400px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.brand-small{
+    font-size:10px;
+    color:#aaa;
+    font-weight:800;
+    letter-spacing:1.5px;
+    margin-bottom:3px;
+}
+
+.restaurant-name{
+    font-size:20px;
+    font-weight:900;
+}
+
+.top-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.connection{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:11px;
+    font-weight:800;
+}
+
+.connection-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#22c55e;
+    box-shadow:
+        0 0 0 4px rgba(34,197,94,.15);
+}
+
+.logout{
+    border:1px solid #333;
+    background:#1c1c1c;
+    color:#fff;
+    border-radius:10px;
+    padding:9px 12px;
+    font-size:11px;
+    font-weight:800;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+    width:100%;
+    max-width:1400px;
+    margin:auto;
+    padding:20px;
+}
+
+
+/* =========================================================
+   ALERT
+========================================================= */
+
+.new-order-alert{
+    display:none;
+    background:#dc2626;
+    color:#fff;
+    border-radius:16px;
+    padding:17px;
+    margin-bottom:18px;
+    font-weight:900;
+    text-align:center;
+    animation:pulseAlert 1s infinite;
+    box-shadow:
+        0 10px 30px rgba(220,38,38,.25);
+}
+
+@keyframes pulseAlert{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.01);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   COUNTERS
+========================================================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:
+        repeat(4,1fr);
+    gap:12px;
+    margin-bottom:22px;
+}
+
+.stat{
+    background:#fff;
+    border-radius:16px;
+    padding:18px;
+    border:1px solid var(--border);
+    position:relative;
+    overflow:hidden;
+}
+
+.stat::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:4px;
+    background:#ddd;
+}
+
+.stat.new::before{
+    background:var(--red);
+}
+
+.stat.preparing::before{
+    background:var(--orange);
+}
+
+.stat.ready::before{
+    background:var(--yellow);
+}
+
+.stat.courier::before{
+    background:var(--blue);
+}
+
+.stat-label{
+    font-size:11px;
+    font-weight:800;
+    color:#777;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+}
+
+.stat-number{
+    font-size:34px;
+    font-weight:900;
+    margin-top:5px;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:14px;
+}
+
+.section-header h2{
+    font-size:19px;
+    font-weight:900;
+}
+
+.last-update{
+    color:#888;
+    font-size:11px;
+    font-weight:600;
+}
+
+
+/* =========================================================
+   ORDER GRID
+========================================================= */
+
+.orders-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(330px,1fr)
+        );
+    gap:16px;
+}
+
+
+/* =========================================================
+   ORDER CARD
+========================================================= */
+
+.order-card{
+    background:#fff;
+    border-radius:18px;
+    border:1px solid var(--border);
+    overflow:hidden;
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.04);
+}
+
+.order-card.is-new{
+    border:2px solid var(--red);
+    box-shadow:
+        0 8px 30px rgba(220,38,38,.13);
+}
+
+.order-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+    padding:17px;
+    border-bottom:1px solid #eee;
+}
+
+.order-number{
+    font-size:21px;
+    font-weight:900;
+}
+
+.order-time{
+    font-size:11px;
+    color:#777;
+    margin-top:4px;
+}
+
+.status{
+    padding:7px 9px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:900;
+    white-space:nowrap;
+}
+
+.status-new{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.status-preparing{
+    background:#ffedd5;
+    color:#c2410c;
+}
+
+.status-ready{
+    background:#fef9c3;
+    color:#854d0e;
+}
+
+.status-courier{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.status-delivered{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-cancelled{
+    background:#e5e7eb;
+    color:#525252;
+}
+
+
+/* =========================================================
+   CUSTOMER
+========================================================= */
+
+.customer{
+    padding:16px 17px;
+    border-bottom:1px solid #eee;
+}
+
+.customer-name{
+    font-weight:900;
+    font-size:16px;
+}
+
+.customer-phone{
+    display:inline-block;
+    margin-top:7px;
+    text-decoration:none;
+    color:#2563eb;
+    font-weight:800;
+    font-size:14px;
+}
+
+.address{
+    margin-top:10px;
+    font-size:13px;
+    line-height:1.55;
+    color:#444;
+}
+
+.district{
+    font-weight:800;
+}
+
+.note{
+    margin-top:10px;
+    padding:10px;
+    border-radius:9px;
+    background:#fff7ed;
+    color:#9a3412;
+    font-size:12px;
+    line-height:1.5;
+}
+
+
+/* =========================================================
+   ITEMS
+========================================================= */
+
+.items{
+    padding:14px 17px;
+    border-bottom:1px solid #eee;
+}
+
+.item-row{
+    display:grid;
+    grid-template-columns:
+        38px 1fr auto;
+    gap:8px;
+    padding:7px 0;
+    align-items:start;
+    font-size:13px;
+}
+
+.item-qty{
+    font-weight:900;
+    color:#dc2626;
+}
+
+.item-name{
+    font-weight:700;
+}
+
+.item-price{
+    font-weight:800;
+    white-space:nowrap;
+}
+
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.payment{
+    padding:14px 17px 0;
+    font-size:12px;
+    color:#555;
+    font-weight:700;
+}
+
+.total-area{
+    padding:12px 17px 16px;
+}
+
+.total-row{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    padding:3px 0;
+    font-size:12px;
+    color:#666;
+}
+
+.total-row.discount{
+    color:#16a34a;
+}
+
+.total-row.final{
+    margin-top:7px;
+    padding-top:10px;
+    border-top:1px dashed #ddd;
+    font-size:17px;
+    color:#111;
+    font-weight:900;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.actions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    padding:0 17px 17px;
+}
+
+.action-button{
+    border:0;
+    border-radius:11px;
+    padding:13px;
+    font-size:12px;
+    font-weight:900;
+}
+
+.action-main{
+    background:#111;
+    color:#fff;
+}
+
+.action-cancel{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.action-button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty{
+    background:#fff;
+    border:1px dashed #ccc;
+    border-radius:16px;
+    padding:35px 20px;
+    text-align:center;
+    color:#888;
+    font-size:13px;
+    grid-column:1/-1;
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-section{
+    margin-top:35px;
+    padding-top:25px;
+    border-top:1px solid #ddd;
+}
+
+.history-toggle{
+    width:100%;
+    border:1px solid #ddd;
+    background:#fff;
+    border-radius:13px;
+    padding:14px;
+    font-weight:900;
+}
+
+#historyContainer{
+    margin-top:15px;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:25px;
+    transform:
+        translateX(-50%)
+        translateY(120px);
+    background:#111;
+    color:#fff;
+    border-radius:12px;
+    padding:13px 18px;
+    font-size:12px;
+    font-weight:800;
+    z-index:9999;
+    opacity:0;
+    transition:.25s;
+    max-width:90%;
+    text-align:center;
+}
+
+.toast.show{
+    opacity:1;
+    transform:
+        translateX(-50%)
+        translateY(0);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:750px){
+
+    .main{
+        padding:14px;
+    }
+
+    .stats{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .orders-grid{
+        grid-template-columns:1fr;
+    }
+
+    .restaurant-name{
+        font-size:16px;
+    }
+
+    .connection span:last-child{
+        display:none;
+    }
+
+    .stat{
+        padding:15px;
+    }
+
+    .stat-number{
+        font-size:29px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     LOGIN
+======================================================= -->
+
+<section id="loginScreen">
+
+    <div class="login-card">
+
+        <div class="login-brand">
+
+            <div class="login-brand-badge">
+                XLINE DELIVERY
+            </div>
+
+            <h1>
+                Personel Paneli
+            </h1>
+
+            <p>
+                Sipariş yönetim sistemine
+                giriş yapın.
+            </p>
+
+        </div>
+
+
+        <form id="loginForm">
+
+            <div class="form-group">
+
+                <label>
+                    E-POSTA
+                </label>
+
+                <input
+                    id="loginEmail"
+                    type="email"
+                    autocomplete="username"
+                    placeholder="E-posta adresi"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    ŞİFRE
+                </label>
+
+                <input
+                    id="loginPassword"
+                    type="password"
+                    autocomplete="current-password"
+                    placeholder="Şifre"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                class="login-button"
+                id="loginButton"
+                type="submit"
+            >
+                GİRİŞ YAP
+            </button>
+
+
+            <div
+                class="login-error"
+                id="loginError"
+            ></div>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     PANEL
+======================================================= -->
+
+<section
+    id="panelScreen"
+    class="hidden"
+>
+
+    <header class="topbar">
+
+        <div class="topbar-inner">
+
+            <div>
+
+                <div class="brand-small">
+                    XLINE DELIVERY
+                </div>
+
+                <div
+                    class="restaurant-name"
+                    id="restaurantName"
+                >
+                    Restoran
+                </div>
+
+            </div>
+
+
+            <div class="top-actions">
+
+                <div class="connection">
+
+                    <div
+                        class="connection-dot"
+                    ></div>
+
+                    <span>
+                        AKTİF
+                    </span>
+
+                </div>
+
+
+                <button
+                    class="logout"
+                    id="logoutButton"
+                >
+                    ÇIKIŞ
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main class="main">
+
+
+        <div
+            class="new-order-alert"
+            id="newOrderAlert"
+        >
+            🔔 YENİ SİPARİŞ GELDİ
+        </div>
+
+
+        <!-- SAYACLAR -->
+
+        <div class="stats">
+
+            <div class="stat new">
+
+                <div class="stat-label">
+                    Yeni
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="countNew"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat preparing">
+
+                <div class="stat-label">
+                    Hazırlanıyor
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="countPreparing"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat ready">
+
+                <div class="stat-label">
+                    Kurye Bekliyor
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="countReady"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat courier">
+
+                <div class="stat-label">
+                    Yolda
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="countCourier"
+                >
+                    0
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- AKTİF SİPARİŞLER -->
+
+        <div class="section-header">
+
+            <h2>
+                Aktif Siparişler
+            </h2>
+
+            <div
+                class="last-update"
+                id="lastUpdate"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div
+            class="orders-grid"
+            id="activeOrders"
+        ></div>
+
+
+
+        <!-- GEÇMİŞ -->
+
+        <section class="history-section">
+
+            <button
+                class="history-toggle"
+                id="historyToggle"
+            >
+                GEÇMİŞ SİPARİŞLERİ GÖSTER
+            </button>
+
+
+            <div
+                id="historyContainer"
+                class="hidden"
+            >
+
+                <div
+                    class="orders-grid"
+                    id="historyOrders"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</section>
+
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+
+<!-- =======================================================
+     SUPABASE
+======================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+/* =========================================================
+   AYARLAR
+========================================================= */
+
+const SUPABASE_URL =
+    "https://ikfdpoyipkrrdnqexdmc.supabase.co";
+
+
+const SUPABASE_KEY =
+    "sb_publishable_aiNrChev_bQJFaqGw4-NbQ_uw0VcdMh";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+const REFRESH_INTERVAL =
+    5000;
+
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let currentRestaurantId =
+    null;
+
+
+let currentRestaurantName =
+    null;
+
+
+let orders =
+    [];
+
+
+let firstLoad =
+    true;
+
+
+let knownOrderIds =
+    new Set();
+
+
+let refreshTimer =
+    null;
+
+
+let audioContext =
+    null;
+
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const loginScreen =
+    document.getElementById(
+        "loginScreen"
+    );
+
+
+const panelScreen =
+    document.getElementById(
+        "panelScreen"
+    );
+
+
+const loginForm =
+    document.getElementById(
+        "loginForm"
+    );
+
+
+const loginButton =
+    document.getElementById(
+        "loginButton"
+    );
+
+
+const loginError =
+    document.getElementById(
+        "loginError"
+    );
+
+
+const activeOrdersElement =
+    document.getElementById(
+        "activeOrders"
+    );
+
+
+const historyOrdersElement =
+    document.getElementById(
+        "historyOrders"
+    );
+
+
+
+/* =========================================================
+   PARA
+========================================================= */
+
+function money(value){
+
+    return new Intl.NumberFormat(
+        "tr-TR",
+        {
+            style:"currency",
+            currency:"TRY",
+            minimumFractionDigits:0,
+            maximumFractionDigits:2
+        }
+    ).format(
+        Number(value || 0)
+    );
+
+}
+
+
+
+/* =========================================================
+   HTML GÜVENLİĞİ
+========================================================= */
+
+function escapeHtml(value){
+
+    return String(
+        value ?? ""
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
+
+
+
+/* =========================================================
+   TARİH
+========================================================= */
+
+function formatDate(value){
+
+    if(
+        !value
+    ){
+
+        return "";
+
+    }
+
+
+    const date =
+        new Date(
+            value
+        );
+
+
+    return date.toLocaleString(
+        "tr-TR",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer =
+    null;
+
+
+function showToast(message){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer =
+        setTimeout(
+            function(){
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2500
+        );
+
+}
+
+
+
+/* =========================================================
+   SES
+========================================================= */
+
+function unlockAudio(){
+
+    try{
+
+        const AudioContext =
+            window.AudioContext
+            ||
+            window.webkitAudioContext;
+
+
+        if(
+            !AudioContext
+        ){
+
+            return;
+
+        }
+
+
+        if(
+            !audioContext
+        ){
+
+            audioContext =
+                new AudioContext();
+
+        }
+
+
+        if(
+            audioContext.state
+            ===
+            "suspended"
+        ){
+
+            audioContext.resume();
+
+        }
+
+    }
+
+    catch(error){
+
+        console.warn(
+            "Ses başlatılamadı:",
+            error
+        );
+
+    }
+
+}
+
+
+function playNewOrderSound(){
+
+    if(
+        !audioContext
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const now =
+            audioContext.currentTime;
+
+
+        [
+            0,
+            .22,
+            .44
+        ]
+        .forEach(
+            function(delay){
+
+                const oscillator =
+                    audioContext.createOscillator();
+
+
+                const gain =
+                    audioContext.createGain();
+
+
+                oscillator.connect(
+                    gain
+                );
+
+
+                gain.connect(
+                    audioContext.destination
+                );
+
+
+                oscillator.frequency.value =
+                    880;
+
+
+                gain.gain.setValueAtTime(
+                    .0001,
+                    now + delay
+                );
+
+
+                gain.gain.exponentialRampToValueAtTime(
+                    .25,
+                    now + delay + .02
+                );
+
+
+                gain.gain.exponentialRampToValueAtTime(
+                    .0001,
+                    now + delay + .17
+                );
+
+
+                oscillator.start(
+                    now + delay
+                );
+
+
+                oscillator.stop(
+                    now + delay + .18
+                );
+
+            }
+        );
+
+    }
+
+    catch(error){
+
+        console.warn(
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+loginForm.addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+
+        unlockAudio();
+
+
+        loginError.style.display =
+            "none";
+
+
+        loginButton.disabled =
+            true;
+
+
+        loginButton.textContent =
+            "GİRİŞ YAPILIYOR...";
+
+
+        const email =
+            document
+            .getElementById(
+                "loginEmail"
+            )
+            .value
+            .trim();
+
+
+        const password =
+            document
+            .getElementById(
+                "loginPassword"
+            )
+            .value;
+
+
+        try{
+
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
+            .auth
+            .signInWithPassword(
+                {
+                    email,
+                    password
+                }
+            );
+
+
+            if(
+                error
+            ){
+
+                throw error;
+
+            }
+
+
+            if(
+                !data.user
+            ){
+
+                throw new Error(
+                    "Kullanıcı bulunamadı."
+                );
+
+            }
+
+
+            await startPanel();
+
+
+        }
+
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            loginError.textContent =
+                "Giriş başarısız. E-posta veya şifrenizi kontrol edin.";
+
+
+            loginError.style.display =
+                "block";
+
+
+            loginButton.disabled =
+                false;
+
+
+            loginButton.textContent =
+                "GİRİŞ YAP";
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   PERSONEL / RESTORAN BUL
+========================================================= */
+
+async function loadStaffRestaurant(){
+
+    const {
+        data:userData,
+        error:userError
+    } =
+    await supabaseClient
+    .auth
+    .getUser();
+
+
+    if(
+        userError
+        ||
+        !userData.user
+    ){
+
+        throw new Error(
+            "Oturum bulunamadı."
+        );
+
+    }
+
+
+    const {
+        data:staff,
+        error:staffError
+    } =
+    await supabaseClient
+    .from(
+        "xd_staff"
+    )
+    .select(
+        "restaurant_id,role"
+    )
+    .eq(
+        "user_id",
+        userData.user.id
+    )
+    .eq(
+        "active",
+        true
+    )
+    .limit(
+        1
+    )
+    .maybeSingle();
+
+
+    if(
+        staffError
+    ){
+
+        throw staffError;
+
+    }
+
+
+    if(
+        !staff
+    ){
+
+        throw new Error(
+            "Bu kullanıcı herhangi bir restorana yetkili değil."
+        );
+
+    }
+
+
+    currentRestaurantId =
+        staff.restaurant_id;
+
+
+    const {
+        data:restaurant,
+        error:restaurantError
+    } =
+    await supabaseClient
+    .from(
+        "xd_restaurants"
+    )
+    .select(
+        "id,name"
+    )
+    .eq(
+        "id",
+        currentRestaurantId
+    )
+    .single();
+
+
+    if(
+        restaurantError
+    ){
+
+        throw restaurantError;
+
+    }
+
+
+    currentRestaurantName =
+        restaurant.name;
+
+
+    document
+    .getElementById(
+        "restaurantName"
+    )
+    .textContent =
+        currentRestaurantName;
+
+}
+
+
+
+/* =========================================================
+   PANELİ BAŞLAT
+========================================================= */
+
+async function startPanel(){
+
+    try{
+
+        await loadStaffRestaurant();
+
+
+        loginScreen.classList.add(
+            "hidden"
+        );
+
+
+        panelScreen.classList.remove(
+            "hidden"
+        );
+
+
+        await loadOrders();
+
+
+        clearInterval(
+            refreshTimer
+        );
+
+
+        refreshTimer =
+            setInterval(
+                loadOrders,
+                REFRESH_INTERVAL
+            );
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        await supabaseClient
+        .auth
+        .signOut();
+
+
+        panelScreen.classList.add(
+            "hidden"
+        );
+
+
+        loginScreen.classList.remove(
+            "hidden"
+        );
+
+
+        loginError.textContent =
+            error.message
+            ||
+            "Panel açılamadı.";
+
+
+        loginError.style.display =
+            "block";
+
+
+        loginButton.disabled =
+            false;
+
+
+        loginButton.textContent =
+            "GİRİŞ YAP";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   SİPARİŞLERİ ÇEK
+========================================================= */
+
+async function loadOrders(){
+
+    if(
+        !currentRestaurantId
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .from(
+            "xd_orders"
+        )
+        .select(`
+            *,
+            xd_order_items (
+                id,
+                product_id,
+                product_name,
+                quantity,
+                unit_price,
+                discounted_unit_price,
+                line_total
+            )
+        `)
+        .eq(
+            "restaurant_id",
+            currentRestaurantId
+        )
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        )
+        .limit(
+            100
+        );
+
+
+        if(
+            error
+        ){
+
+            throw error;
+
+        }
+
+
+        orders =
+            data
+            ||
+            [];
+
+
+        detectNewOrders(
+            orders
+        );
+
+
+        renderPanel();
+
+
+        document
+        .getElementById(
+            "lastUpdate"
+        )
+        .textContent =
+            "Son güncelleme: "
+            +
+            new Date()
+            .toLocaleTimeString(
+                "tr-TR",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit",
+                    second:"2-digit"
+                }
+            );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Siparişler alınamadı:",
+            error
+        );
+
+
+        showToast(
+            "Siparişler yenilenemedi."
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   YENİ SİPARİŞ ALGILA
+========================================================= */
+
+function detectNewOrders(
+    currentOrders
+){
+
+    const activeNewOrders =
+        currentOrders.filter(
+            function(order){
+
+                return (
+                    order.status
+                    ===
+                    "new"
+                );
+
+            }
+        );
+
+
+    if(
+        firstLoad
+    ){
+
+        currentOrders.forEach(
+            function(order){
+
+                knownOrderIds.add(
+                    order.id
+                );
+
+            }
+        );
+
+
+        firstLoad =
+            false;
+
+
+        updateNewOrderAlert(
+            activeNewOrders.length
+        );
+
+
+        return;
+
+    }
+
+
+    let newFound =
+        false;
+
+
+    currentOrders.forEach(
+        function(order){
+
+            if(
+                !knownOrderIds.has(
+                    order.id
+                )
+            ){
+
+                knownOrderIds.add(
+                    order.id
+                );
+
+
+                if(
+                    order.status
+                    ===
+                    "new"
+                ){
+
+                    newFound =
+                        true;
+
+                }
+
+            }
+
+        }
+    );
+
+
+    updateNewOrderAlert(
+        activeNewOrders.length
+    );
+
+
+    if(
+        newFound
+    ){
+
+        playNewOrderSound();
+
+
+        showToast(
+            "Yeni sipariş geldi!"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   YENİ SİPARİŞ UYARISI
+========================================================= */
+
+function updateNewOrderAlert(
+    count
+){
+
+    const alertBox =
+        document.getElementById(
+            "newOrderAlert"
+        );
+
+
+    if(
+        count > 0
+    ){
+
+        alertBox.style.display =
+            "block";
+
+
+        alertBox.textContent =
+            "🔔 "
+            +
+            count
+            +
+            " YENİ SİPARİŞ BEKLİYOR";
+
+    }
+
+    else{
+
+        alertBox.style.display =
+            "none";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   PANEL RENDER
+========================================================= */
+
+function renderPanel(){
+
+    renderCounters();
+
+    renderActiveOrders();
+
+    renderHistory();
+
+}
+
+
+
+/* =========================================================
+   SAYAÇLAR
+========================================================= */
+
+function renderCounters(){
+
+    const count =
+        function(status){
+
+            return orders.filter(
+                function(order){
+
+                    return (
+                        order.status
+                        ===
+                        status
+                    );
+
+                }
+            ).length;
+
+        };
+
+
+    document
+    .getElementById(
+        "countNew"
+    )
+    .textContent =
+        count(
+            "new"
+        );
+
+
+    document
+    .getElementById(
+        "countPreparing"
+    )
+    .textContent =
+        count(
+            "preparing"
+        );
+
+
+    document
+    .getElementById(
+        "countReady"
+    )
+    .textContent =
+        count(
+            "ready"
+        );
+
+
+    document
+    .getElementById(
+        "countCourier"
+    )
+    .textContent =
+        count(
+            "courier"
+        );
+
+}
+
+
+
+/* =========================================================
+   AKTİF SİPARİŞLER
+========================================================= */
+
+function renderActiveOrders(){
+
+    const active =
+        orders.filter(
+            function(order){
+
+                return [
+                    "new",
+                    "preparing",
+                    "ready",
+                    "courier"
+                ]
+                .includes(
+                    order.status
+                );
+
+            }
+        );
+
+
+    if(
+        active.length === 0
+    ){
+
+        activeOrdersElement.innerHTML =
+            `
+            <div class="empty">
+                Şu anda aktif sipariş bulunmuyor.
+            </div>
+            `;
+
+
+        return;
+
+    }
+
+
+    activeOrdersElement.innerHTML =
+        active
+        .map(
+            orderCardHtml
+        )
+        .join("");
+
+}
+
+
+
+/* =========================================================
+   GEÇMİŞ
+========================================================= */
+
+function renderHistory(){
+
+    const history =
+        orders.filter(
+            function(order){
+
+                return [
+                    "delivered",
+                    "cancelled"
+                ]
+                .includes(
+                    order.status
+                );
+
+            }
+        );
+
+
+    if(
+        history.length === 0
+    ){
+
+        historyOrdersElement.innerHTML =
+            `
+            <div class="empty">
+                Geçmiş sipariş bulunmuyor.
+            </div>
+            `;
+
+
+        return;
+
+    }
+
+
+    historyOrdersElement.innerHTML =
+        history
+        .map(
+            orderCardHtml
+        )
+        .join("");
+
+}
+
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function statusInfo(status){
+
+    const map = {
+
+        new:{
+            label:"YENİ",
+            className:"status-new"
+        },
+
+        preparing:{
+            label:"HAZIRLANIYOR",
+            className:"status-preparing"
+        },
+
+        ready:{
+            label:"KURYE BEKLİYOR",
+            className:"status-ready"
+        },
+
+        courier:{
+            label:"YOLDA",
+            className:"status-courier"
+        },
+
+        delivered:{
+            label:"TESLİM EDİLDİ",
+            className:"status-delivered"
+        },
+
+        cancelled:{
+            label:"İPTAL",
+            className:"status-cancelled"
+        }
+
+    };
+
+
+    return (
+        map[status]
+        ||
+        {
+            label:status,
+            className:""
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   SONRAKİ AKSİYON
+========================================================= */
+
+function nextAction(status){
+
+    const map = {
+
+        new:{
+            status:"preparing",
+            label:"SİPARİŞİ KABUL ET"
+        },
+
+        preparing:{
+            status:"ready",
+            label:"HAZIR"
+        },
+
+        ready:{
+            status:"courier",
+            label:"KURYEYE VERİLDİ"
+        },
+
+        courier:{
+            status:"delivered",
+            label:"TESLİM EDİLDİ"
+        }
+
+    };
+
+
+    return (
+        map[status]
+        ||
+        null
+    );
+
+}
+
+
+
+/* =========================================================
+   ORDER CARD
+========================================================= */
+
+function orderCardHtml(order){
+
+    const status =
+        statusInfo(
+            order.status
+        );
+
+
+    const next =
+        nextAction(
+            order.status
+        );
+
+
+    const items =
+        Array.isArray(
+            order.xd_order_items
+        )
+        ?
+        order.xd_order_items
+        :
+        [];
+
+
+    const itemHtml =
+        items.length
+        ?
+        items
+        .map(
+            function(item){
+
+                return `
+
+                    <div class="item-row">
+
+                        <div class="item-qty">
+                            ${escapeHtml(item.quantity)}x
+                        </div>
+
+                        <div class="item-name">
+                            ${escapeHtml(item.product_name)}
+                        </div>
+
+                        <div class="item-price">
+                            ${money(item.line_total)}
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("")
+        :
+        `
+        <div class="item-row">
+            Ürün bilgisi bulunamadı.
+        </div>
+        `;
+
+
+    let actions =
+        "";
+
+
+    if(
+        next
+    ){
+
+        actions += `
+
+            <button
+                class="action-button action-main"
+                onclick="changeStatus(
+                    '${order.id}',
+                    '${next.status}',
+                    this
+                )"
+            >
+                ${next.label}
+            </button>
+
+        `;
+
+    }
+
+
+    if(
+        ![
+            "delivered",
+            "cancelled"
+        ]
+        .includes(
+            order.status
+        )
+    ){
+
+        actions += `
+
+            <button
+                class="action-button action-cancel"
+                onclick="cancelOrder(
+                    '${order.id}',
+                    this
+                )"
+            >
+                SİPARİŞİ İPTAL ET
+            </button>
+
+        `;
+
+    }
+
+
+    return `
+
+        <article
+            class="
+                order-card
+                ${
+                    order.status === "new"
+                    ?
+                    "is-new"
+                    :
+                    ""
+                }
+            "
+        >
+
+            <div class="order-head">
+
+                <div>
+
+                    <div class="order-number">
+                        #${escapeHtml(order.order_number)}
+                    </div>
+
+                    <div class="order-time">
+                        ${formatDate(order.created_at)}
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="
+                        status
+                        ${status.className}
+                    "
+                >
+                    ${status.label}
+                </div>
+
+            </div>
+
+
+            <div class="customer">
+
+                <div class="customer-name">
+                    ${escapeHtml(order.customer_name)}
+                </div>
+
+
+                <a
+                    class="customer-phone"
+                    href="tel:${escapeHtml(order.customer_phone)}"
+                >
+                    ${escapeHtml(order.customer_phone)}
+                </a>
+
+
+                <div class="address">
+
+                    ${
+                        order.customer_district
+                        ?
+                        `
+                        <div class="district">
+                            ${escapeHtml(order.customer_district)}
+                        </div>
+                        `
+                        :
+                        ""
+                    }
+
+                    ${escapeHtml(order.customer_address)}
+
+                </div>
+
+
+                ${
+                    order.customer_note
+                    ?
+                    `
+                    <div class="note">
+
+                        <strong>
+                            Müşteri Notu:
+                        </strong>
+
+                        <br>
+
+                        ${escapeHtml(order.customer_note)}
+
+                    </div>
+                    `
+                    :
+                    ""
+                }
+
+            </div>
+
+
+            <div class="items">
+
+                ${itemHtml}
+
+            </div>
+
+
+            <div class="payment">
+
+                Ödeme:
+                <strong>
+                    ${escapeHtml(order.payment_method)}
+                </strong>
+
+            </div>
+
+
+            <div class="total-area">
+
+                <div class="total-row">
+
+                    <span>
+                        Ara Toplam
+                    </span>
+
+                    <strong>
+                        ${money(order.subtotal)}
+                    </strong>
+
+                </div>
+
+
+                <div class="total-row discount">
+
+                    <span>
+                        İndirim
+                    </span>
+
+                    <strong>
+                        -${money(order.discount_amount)}
+                    </strong>
+
+                </div>
+
+
+                ${
+                    Number(
+                        order.delivery_fee
+                        ||
+                        0
+                    )
+                    >
+                    0
+                    ?
+                    `
+
+                    <div class="total-row">
+
+                        <span>
+                            Teslimat
+                        </span>
+
+                        <strong>
+                            ${money(order.delivery_fee)}
+                        </strong>
+
+                    </div>
+
+                    `
+                    :
+                    ""
+                }
+
+
+                <div class="total-row final">
+
+                    <span>
+                        TOPLAM
+                    </span>
+
+                    <span>
+                        ${money(order.total_amount)}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            ${
+                actions
+                ?
+                `
+                <div class="actions">
+                    ${actions}
+                </div>
+                `
+                :
+                ""
+            }
+
+        </article>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   DURUM DEĞİŞTİR
+========================================================= */
+
+async function changeStatus(
+    orderId,
+    newStatus,
+    button
+){
+
+    if(
+        button
+    ){
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "İŞLENİYOR...";
+
+    }
+
+
+    try{
+
+        const {
+            error
+        } =
+        await supabaseClient
+        .from(
+            "xd_orders"
+        )
+        .update(
+            {
+                status:
+                    newStatus
+            }
+        )
+        .eq(
+            "id",
+            orderId
+        )
+        .eq(
+            "restaurant_id",
+            currentRestaurantId
+        );
+
+
+        if(
+            error
+        ){
+
+            throw error;
+
+        }
+
+
+        showToast(
+            "Sipariş durumu güncellendi."
+        );
+
+
+        await loadOrders();
+
+    }
+
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        showToast(
+            "Sipariş güncellenemedi."
+        );
+
+
+        if(
+            button
+        ){
+
+            button.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+
+/* =========================================================
+   İPTAL
+========================================================= */
+
+async function cancelOrder(
+    orderId,
+    button
+){
+
+    const confirmed =
+        confirm(
+            "Bu siparişi iptal etmek istediğinize emin misiniz?"
+        );
+
+
+    if(
+        !confirmed
+    ){
+
+        return;
+
+    }
+
+
+    await changeStatus(
+        orderId,
+        "cancelled",
+        button
+    );
+
+}
+
+
+
+/* =========================================================
+   GEÇMİŞ AÇ / KAPAT
+========================================================= */
+
+document
+.getElementById(
+    "historyToggle"
+)
+.addEventListener(
+    "click",
+    function(){
+
+        const container =
+            document.getElementById(
+                "historyContainer"
+            );
+
+
+        const isHidden =
+            container.classList.contains(
+                "hidden"
+            );
+
+
+        if(
+            isHidden
+        ){
+
+            container.classList.remove(
+                "hidden"
+            );
+
+
+            this.textContent =
+                "GEÇMİŞ SİPARİŞLERİ GİZLE";
+
+        }
+
+        else{
+
+            container.classList.add(
+                "hidden"
+            );
+
+
+            this.textContent =
+                "GEÇMİŞ SİPARİŞLERİ GÖSTER";
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   ÇIKIŞ
+========================================================= */
+
+document
+.getElementById(
+    "logoutButton"
+)
+.addEventListener(
+    "click",
+    async function(){
+
+        clearInterval(
+            refreshTimer
+        );
+
+
+        await supabaseClient
+        .auth
+        .signOut();
+
+
+        currentRestaurantId =
+            null;
+
+
+        currentRestaurantName =
+            null;
+
+
+        orders =
+            [];
+
+
+        firstLoad =
+            true;
+
+
+        knownOrderIds =
+            new Set();
+
+
+        panelScreen.classList.add(
+            "hidden"
+        );
+
+
+        loginScreen.classList.remove(
+            "hidden"
+        );
+
+
+        loginButton.disabled =
+            false;
+
+
+        loginButton.textContent =
+            "GİRİŞ YAP";
+
+    }
+);
+
+
+
+/* =========================================================
+   MEVCUT OTURUM
+========================================================= */
+
+async function checkExistingSession(){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+    .auth
+    .getSession();
+
+
+    if(
+        error
+    ){
+
+        console.error(
+            error
+        );
+
+        return;
+
+    }
+
+
+    if(
+        data.session
+    ){
+
+        unlockAudio();
+
+        await startPanel();
+
+    }
+
+}
+
+
+
+/* =========================================================
+   BAŞLAT
+========================================================= */
+
+checkExistingSession();
+
+</script>
+
+</body>
+</html>

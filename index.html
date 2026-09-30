@@ -63,7 +63,83 @@ button{
 .hidden{
     display:none !important;
 }
+/* =========================================================
+   RESTORAN AÇIK / KAPALI
+========================================================= */
 
+.restaurant-control{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:17px;
+    margin-bottom:18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.04);
+}
+
+.restaurant-control-title{
+    font-size:11px;
+    font-weight:900;
+    color:#777;
+    letter-spacing:.7px;
+}
+
+.restaurant-control-status{
+    margin-top:5px;
+    font-size:17px;
+    font-weight:900;
+}
+
+.restaurant-control-status.open{
+    color:#16a34a;
+}
+
+.restaurant-control-status.closed{
+    color:#dc2626;
+}
+
+.restaurant-toggle-button{
+    border:0;
+    border-radius:12px;
+    padding:13px 17px;
+    font-size:11px;
+    font-weight:900;
+    min-width:150px;
+}
+
+.restaurant-toggle-button.close-button{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.restaurant-toggle-button.open-button{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.restaurant-toggle-button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+@media(max-width:600px){
+
+    .restaurant-control{
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+    .restaurant-toggle-button{
+        width:100%;
+    }
+
+}
 
 /* =========================================================
    LOGIN
@@ -896,7 +972,34 @@ button{
 
     <main class="main">
 
+<!-- RESTORAN SİPARİŞ DURUMU -->
 
+<div class="restaurant-control">
+
+    <div class="restaurant-control-info">
+
+        <div class="restaurant-control-title">
+            SİPARİŞ ALIMI
+        </div>
+
+        <div
+            class="restaurant-control-status"
+            id="restaurantOrderStatus"
+        >
+            DURUM KONTROL EDİLİYOR...
+        </div>
+
+    </div>
+
+    <button
+        id="restaurantToggleButton"
+        class="restaurant-toggle-button"
+        type="button"
+    >
+        BEKLEYİN...
+    </button>
+
+</div>
         <div
             class="new-order-alert"
             id="newOrderAlert"
@@ -1082,7 +1185,8 @@ let currentRestaurantId =
 
 let currentRestaurantName =
     null;
-
+let restaurantAcceptingOrders =
+    true;
 
 let orders =
     [];
@@ -1637,8 +1741,8 @@ async function loadStaffRestaurant(){
         "xd_restaurants"
     )
     .select(
-        "id,name"
-    )
+    "id,name,accepting_orders"
+)
     .eq(
         "id",
         currentRestaurantId
@@ -1657,7 +1761,10 @@ async function loadStaffRestaurant(){
 
     currentRestaurantName =
         restaurant.name;
+restaurantAcceptingOrders =
+    restaurant.accepting_orders;
 
+renderRestaurantOrderStatus();
 
     document
     .getElementById(
@@ -2801,7 +2908,194 @@ document
     }
 );
 
+/* =========================================================
+   RESTORAN SİPARİŞ AÇIK / KAPALI
+========================================================= */
 
+function renderRestaurantOrderStatus(){
+
+    const statusElement =
+        document.getElementById(
+            "restaurantOrderStatus"
+        );
+
+    const button =
+        document.getElementById(
+            "restaurantToggleButton"
+        );
+
+    if(
+        !statusElement
+        ||
+        !button
+    ){
+        return;
+    }
+
+
+    if(
+        restaurantAcceptingOrders
+    ){
+
+        statusElement.textContent =
+            "● SİPARİŞ ALIMI AÇIK";
+
+        statusElement.className =
+            "restaurant-control-status open";
+
+        button.textContent =
+            "SİPARİŞİ KAPAT";
+
+        button.className =
+            "restaurant-toggle-button close-button";
+
+    }
+
+    else{
+
+        statusElement.textContent =
+            "● SİPARİŞ ALIMI KAPALI";
+
+        statusElement.className =
+            "restaurant-control-status closed";
+
+        button.textContent =
+            "SİPARİŞİ AÇ";
+
+        button.className =
+            "restaurant-toggle-button open-button";
+
+    }
+
+}
+
+
+document
+.getElementById(
+    "restaurantToggleButton"
+)
+.addEventListener(
+    "click",
+    async function(){
+
+        const button =
+            this;
+
+        const newValue =
+            !restaurantAcceptingOrders;
+
+
+        if(
+            newValue === false
+        ){
+
+            const confirmed =
+                confirm(
+                    "Sipariş alımını kapatmak istediğinize emin misiniz?\n\nMüşteriler yeni sipariş veremeyecek."
+                );
+
+            if(
+                !confirmed
+            ){
+                return;
+            }
+
+        }
+
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "GÜNCELLENİYOR...";
+
+
+        try{
+
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
+            .from(
+                "xd_restaurants"
+            )
+            .update(
+                {
+                    accepting_orders:
+                        newValue
+                }
+            )
+            .eq(
+                "id",
+                currentRestaurantId
+            )
+            .select(
+                "accepting_orders"
+            )
+            .single();
+
+
+            if(
+                error
+            ){
+                throw error;
+            }
+
+
+            restaurantAcceptingOrders =
+                data.accepting_orders;
+
+
+            renderRestaurantOrderStatus();
+
+
+            if(
+                restaurantAcceptingOrders
+            ){
+
+                showToast(
+                    "Sipariş alımı açıldı."
+                );
+
+            }
+
+            else{
+
+                showToast(
+                    "Sipariş alımı kapatıldı."
+                );
+
+            }
+
+        }
+
+        catch(error){
+
+            console.error(
+                "Restoran durumu değiştirilemedi:",
+                error
+            );
+
+
+            showToast(
+                "Sipariş durumu değiştirilemedi."
+            );
+
+
+            renderRestaurantOrderStatus();
+
+        }
+
+        finally{
+
+            button.disabled =
+                false;
+
+        }
+
+    }
+);
 
 /* =========================================================
    ÇIKIŞ
